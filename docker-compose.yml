@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  wordpress:
+    build: ./config/wordpress
+    ports:
+      - 8080:80
+    volumes:
+      - ./wordpress:/var/www/html:rw,cached
+      - ./data:/data:rw,cached
+    environment:
+      WORDPRESS_DB_HOST: database
+      WORDPRESS_DB_PASSWORD: berni
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_TABLE_PREFIX: wp_
+      #XDEBUG_CONFIG: remote_host=${XDEBUG_REMOTE_HOST_IP}
+    restart: unless-stopped
+
+  database:
+    build: ./config/database
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: berni
+      MYSQL_DATABASE: wordpress
+    volumes:
+      - mysql_volume:/var/lib/mysql
+
+volumes:
+  mysql_volume:
+    external: false
